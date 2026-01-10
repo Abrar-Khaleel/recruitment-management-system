@@ -178,30 +178,41 @@ body {
 
 
 /* 0 JS Dropdown Logic */
-.profile-dropdown-container {
-    position: relative;
+.profile-stack {
+    display: flex; align-items: center; gap: 10px; padding: 4px 8px;
+    border-radius: 30px; background: #fff; border: 1px solid #eee;
+    transition: all 0.2s ease;
 }
 
-/* Hide menu by default */
+.profile-dropdown-container { position: relative; }
+
 .custom-dropdown-menu {
-    display: none; 
-    position: absolute;
-    right: 0;
-    top: 100%;
-    background-color: #fff;
-    min-width: 200px;
-    border-radius: 12px;
-    padding: 8px 0;
-    z-index: 1050;
-    list-style: none;
-    margin-top: 8px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    border: 1px solid #eee;
+    /* 1. Hide it using opacity/visibility instead of display:none */
+    opacity: 0;
+    visibility: hidden;
+    
+    position: absolute; right: 0; top: 100%;
+    background-color: #fff; min-width: 210px;
+    border-radius: 12px; padding: 8px 0; z-index: 1050;
+    list-style: none; margin-top: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #eee;
+    
+    /* 2. This creates the "stay active" delay */
+    /* When mouse LEAVES, wait 0.3s before fading out */
+    transition: all 0.2s ease 1.0s; 
+    
+    /* Move it slightly up so it slides down when opening */
+    transform: translateY(-10px);
 }
 
-/* Show menu when hovering over the container */
 .profile-dropdown-container:hover .custom-dropdown-menu {
-    display: block;
+    /* 3. Show it instantly when hovering */
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    
+    /* When mouse ENTERS, remove the delay so it opens instantly */
+    transition-delay: 0s;
 }
 
 /* Dropdown Item Styling */
