@@ -3,8 +3,6 @@
 
 A modern, responsive, and full-stack web application designed for HR departments to manage recruitment pipelines, track job postings, and handle candidate applications. Built with a focus on clean Enterprise UI/UX and a robust Django backend.
 
-![Project Banner](https://via.placeholder.com/1200x600.png?text=Recruitment+Management+System+Dashboard)
-
 ## 🚀 Key Features
 
 ### 📊 Analytics & Reporting
