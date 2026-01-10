@@ -1,7 +1,3 @@
-Here is the updated **README.md** file, fully rebranded to match your new **Recruitment Management System (RMS)**. I have updated the terminology (Candidates/Jobs), added the MySQL setup instructions, and highlighted your new Analytics features.
-
-Overwrite your existing `README.md` with this code:
-
 ```markdown
 # Recruitment Management System (RMS) 👔
 
@@ -32,8 +28,8 @@ A modern, responsive, and full-stack web application designed for HR departments
 
 ## 🛠️ Tech Stack
 
-* **Frontend:** HTML5, CSS3, Bootstrap 5.3, Bootstrap Icons, Chart.js.
-* **Backend:** Python 3.12, Django 5.0+.
+* **Frontend:** HTML5, CSS3, Bootstrap 5.3, Bootstrap Icons.
+* **Backend:** Python 3.12.5, Django 5.0+.
 * **Database:** MySQL (Production ready).
 * **Architecture:** Django MVT (Model-View-Template).
 
@@ -67,7 +63,7 @@ Follow these steps to run the project locally on your machine.
 **1. Clone the Repository**
 
 ```bash
-git clone [https://github.com/your-username/recruitment-management-system.git](https://github.com/your-username/recruitment-management-system.git)
+git clone https://github.com/Abrar-Khaleel/recruitment-management-system.git
 cd recruitment-management-system
 
 ```
