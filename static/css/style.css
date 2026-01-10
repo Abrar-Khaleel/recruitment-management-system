@@ -1,0 +1,232 @@
+/* style.css - Apple Enterprise Design System */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --app-bg: #F5F5F7;           /* Apple Off-White */
+    --app-blue: #0071e3;         /* Apple Primary Blue */
+    --app-text: #1d1d1f;         /* Deep Gray/Black */
+    --app-gray: #86868b;         /* Muted Text */
+    --app-border: #d2d2d7;       /* Border Color */
+    --sidebar-width: 260px;
+    --card-radius: 16px;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; /* [cite: 20] */
+    background-color: var(--app-bg); /* [cite: 16] */
+    color: var(--app-text);
+    font-size: 14px; /* Enterprise Density */
+    -webkit-font-smoothing: antialiased;
+}
+
+/* --- Layout Structure --- */
+.sidebar {
+    width: var(--sidebar-width);
+    position: fixed;
+    top: 0; bottom: 0; left: 0;
+    background: rgba(255, 255, 255, 0.85); /* Glass Effect */
+    backdrop-filter: saturate(180%) blur(20px);
+    border-right: 1px solid rgba(0,0,0,0.05);
+    padding-top: 24px;
+    z-index: 1000;
+}
+
+.main-content {
+    margin-left: var(--sidebar-width);
+    padding: 30px 40px;
+}
+
+/* --- Navigation --- */
+.nav-section {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--app-gray);
+    text-transform: uppercase;
+    padding: 16px 24px 8px;
+    letter-spacing: 0.5px;
+}
+
+.nav-link {
+    color: #424245;
+    font-weight: 500;
+    padding: 10px 24px;
+    border-radius: 0;
+    border-left: 3px solid transparent;
+    transition: all 0.2s;
+}
+
+.nav-link:hover {
+    background-color: rgba(0,0,0,0.03);
+    color: #000;
+}
+
+.nav-link.active {
+    background-color: #F0F8FF; /* Tinted Blue Background */
+    color: var(--app-blue);
+    border-left-color: var(--app-blue); /* Active Indicator */
+}
+
+/* --- Top Header --- */
+.header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.search-input {
+    background: white;
+    border: 1px solid var(--app-border);
+    border-radius: 8px;
+    padding: 8px 12px 8px 36px;
+    width: 320px;
+    font-size: 13px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%2386868b' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 12px center;
+}
+
+/* --- Cards & Tables --- */
+.card-glass {
+    background: white;
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: var(--card-radius);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03); /* Soft Apple Shadow */
+    overflow: hidden;
+}
+
+.table thead th {
+    background-color: #fafafa;
+    color: var(--app-gray);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--app-border);
+    padding-top: 14px;
+    padding-bottom: 14px;
+}
+
+/* --- Components --- */
+.btn-primary {
+    background-color: var(--app-blue);
+    border: none;
+    border-radius: 99px; /* Pill Shape */
+    padding: 8px 20px;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.btn-primary:hover {
+    background-color: #0062c4;
+    transform: scale(1.02);
+}
+
+.badge-status {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 11px;
+}
+.status-active { background-color: #e6f4ea; color: #1e7e34; }
+.status-warn { background-color: #fff8e1; color: #b7791f; }
+
+/* Improve button feel */
+.btn-primary {
+    border-radius: 8px; /* Softer corners */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+}
+
+/* Tighter label spacing */
+.form-label-custom {
+    margin-bottom: 4px;
+    opacity: 0.8;
+}
+
+/* Soften the card appearance */
+.card-glass {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.form-control:focus {
+    border-color: var(--app-blue);
+    box-shadow: 0 0 0 0.25rem rgba(var(--app-blue-rgb), 0.25);
+    outline: 0;
+}
+
+/* Sidebar Hover Effect */
+.nav-link:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+    color: var(--app-blue);
+    border-radius: 8px;
+}
+
+/* Card Hover Elevation */
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+
+/* 0 JS Dropdown Logic */
+.profile-dropdown-container {
+    position: relative;
+}
+
+/* Hide menu by default */
+.custom-dropdown-menu {
+    display: none; 
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background-color: #fff;
+    min-width: 200px;
+    border-radius: 12px;
+    padding: 8px 0;
+    z-index: 1050;
+    list-style: none;
+    margin-top: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    border: 1px solid #eee;
+}
+
+/* Show menu when hovering over the container */
+.profile-dropdown-container:hover .custom-dropdown-menu {
+    display: block;
+}
+
+/* Dropdown Item Styling */
+.menu-header {
+    padding: 8px 16px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 4px;
+}
+
+.custom-dropdown-menu li a {
+    display: block;
+    padding: 10px 16px;
+    color: #4a5568;
+    text-decoration: none;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.custom-dropdown-menu li a:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+    color: var(--app-blue);
+}
+
+.menu-divider {
+    height: 1px;
+    background-color: #eee;
+    margin: 4px 0;
+}
