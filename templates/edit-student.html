@@ -69,8 +69,8 @@
                     </div>
                     <ul class="custom-dropdown-menu">
                         <li class="menu-header"><div class="fw-bold small" style="color: #333;">HR Manager</div><div class="text-muted" style="font-size: 11px;">hr@company.com</div></li>
-                        <li><a href="#"><i class="bi bi-person me-2"></i> My Profile</a></li>
-                        <li><a href="#"><i class="bi bi-gear me-2"></i> Account Settings</a></li>
+                        <li><a href="{% url 'profile' %}"><i class="bi bi-person me-2"></i> My Profile</a></li>
+                        <li><a href="{% url 'settings' %}"><i class="bi bi-gear me-2"></i> Account Settings</a></li>
                         <li class="menu-divider"></li>
                         <li><a href="{% url 'logout' %}" class="text-danger fw-bold"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
                     </ul>

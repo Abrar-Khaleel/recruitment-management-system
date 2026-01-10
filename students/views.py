@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 import csv
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 # You can keep your existing imports (Student, Course) here as well
 
 def login_view(request):
@@ -245,3 +246,18 @@ def export_students_csv(request):
 
     return response
 
+@login_required
+def profile_view(request):
+    return render(request, 'profile.html', {'user': request.user})
+
+@login_required
+def settings_view(request):
+    if request.method == 'POST':
+        user = request.user
+        user.first_name = request.POST.get('full_name')
+        user.email = request.POST.get('email')
+        user.save()
+        messages.success(request, 'Profile details updated successfully!')
+        return redirect('settings')
+    
+    return render(request, 'settings.html', {'user': request.user})
