@@ -4,16 +4,18 @@
 :root {
     --app-bg: #F5F5F7;           /* Apple Off-White */
     --app-blue: #0071e3;         /* Apple Primary Blue */
+    --app-blue-hover: #0062c4;   /* Darker Blue for Hover */
     --app-text: #1d1d1f;         /* Deep Gray/Black */
     --app-gray: #86868b;         /* Muted Text */
     --app-border: #d2d2d7;       /* Border Color */
     --sidebar-width: 260px;
     --card-radius: 16px;
+    --app-blue-rgb: 0, 113, 227; /* For box-shadow calculations */
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; /* [cite: 20] */
-    background-color: var(--app-bg); /* [cite: 16] */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--app-bg);
     color: var(--app-text);
     font-size: 14px; /* Enterprise Density */
     -webkit-font-smoothing: antialiased;
@@ -50,7 +52,7 @@ body {
     color: #424245;
     font-weight: 500;
     padding: 10px 24px;
-    border-radius: 0;
+    border-radius: 0; /* Squared for left-border effect */
     border-left: 3px solid transparent;
     transition: all 0.2s;
 }
@@ -74,25 +76,44 @@ body {
     margin-bottom: 32px;
 }
 
-.search-input {
+.search-input-refined {
     background: white;
     border: 1px solid var(--app-border);
     border-radius: 8px;
     padding: 8px 12px 8px 36px;
     width: 320px;
     font-size: 13px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%2386868b' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: 12px center;
+    transition: all 0.2s ease;
 }
 
-/* --- Cards & Tables --- */
+.search-container { 
+    flex: 1; 
+    max-width: 400px; 
+    position: relative; 
+}
+
+.search-container i { 
+    position: absolute; 
+    left: 12px; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    color: #adb5bd; 
+}
+
+/* --- Cards & UI Elements --- */
 .card-glass {
     background: white;
     border: 1px solid rgba(0,0,0,0.05);
     border-radius: var(--card-radius);
     box-shadow: 0 4px 12px rgba(0,0,0,0.03); /* Soft Apple Shadow */
     overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover, .card-glass:hover {
+    /* Subtle lift effect on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
 .table thead th {
@@ -106,21 +127,35 @@ body {
     padding-bottom: 14px;
 }
 
-/* --- Components --- */
+/* --- Buttons & Inputs --- */
 .btn-primary {
     background-color: var(--app-blue);
     border: none;
-    border-radius: 99px; /* Pill Shape */
-    padding: 8px 20px;
+    border-radius: 99px; /* Pill Shape - Apple Style */
+    padding: 8px 24px;
     font-weight: 500;
     font-size: 13px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s;
 }
 
 .btn-primary:hover {
-    background-color: #0062c4;
-    transform: scale(1.02);
+    background-color: var(--app-blue-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
 }
 
+.form-control:focus, .form-select:focus, .search-input-refined:focus {
+    border-color: var(--app-blue);
+    box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15); /* Softer focus ring */
+    outline: 0;
+}
+
+.form-label-custom {
+    margin-bottom: 4px;
+    opacity: 0.8;
+}
+
+/* --- Badges & Utility --- */
 .badge-status {
     padding: 5px 10px;
     border-radius: 6px;
@@ -130,114 +165,73 @@ body {
 .status-active { background-color: #e6f4ea; color: #1e7e34; }
 .status-warn { background-color: #fff8e1; color: #b7791f; }
 
-/* Improve button feel */
-.btn-primary {
-    border-radius: 8px; /* Softer corners */
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+.avatar-circle-sm { 
+    width: 32px; height: 32px; 
+    background-color: #e3e3e3; color: #555; 
+    border-radius: 50%; 
+    display: flex; align-items: center; justify-content: center; 
+    font-size: 11px; font-weight: 600; 
+    margin-right: 12px; flex-shrink: 0; 
 }
 
-.btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+.action-btn { 
+    padding: 4px 8px; 
+    border-radius: 6px; 
+    color: #6c757d; 
+    transition: all 0.2s ease; 
+}
+.action-btn:hover { background-color: #f8f9fa; color: var(--app-blue); }
+
+/* 1. HIDE the checkbox input */
+.dropdown-checkbox { display: none; }
+
+/* 2. OVERLAY (Layer 1 - Z-Index 1050) */
+/* This covers the screen but sits BEHIND the menu */
+.overlay-close {
+    display: none; 
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 1050; /* LOW LAYER */
+    cursor: default;
 }
 
-/* Tighter label spacing */
-.form-label-custom {
-    margin-bottom: 4px;
-    opacity: 0.8;
-}
-
-/* Soften the card appearance */
-.card-glass {
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-}
-
-.form-control:focus {
-    border-color: var(--app-blue);
-    box-shadow: 0 0 0 0.25rem rgba(var(--app-blue-rgb), 0.25);
-    outline: 0;
-}
-
-/* Sidebar Hover Effect */
-.nav-link:hover {
-    background-color: rgba(13, 110, 253, 0.05);
-    color: var(--app-blue);
-    border-radius: 8px;
-}
-
-/* Card Hover Elevation */
-.card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-}
-
-
-/* 0 JS Dropdown Logic */
+/* 3. PROFILE BUTTON (Layer 2 - Z-Index 1052) */
 .profile-stack {
     display: flex; align-items: center; gap: 10px; padding: 4px 8px;
     border-radius: 30px; background: #fff; border: 1px solid #eee;
-    transition: all 0.2s ease;
+    cursor: pointer; user-select: none; transition: all 0.2s ease;
+    position: relative; 
+    z-index: 1052; /* MIDDLE LAYER - Above overlay so you can close it */
 }
 
-.profile-dropdown-container { position: relative; }
-
+/* 4. THE MENU (Layer 3 - Z-Index 1055) */
+/* This needs the HIGHEST z-index so links are clickable */
 .custom-dropdown-menu {
-    /* 1. Hide it using opacity/visibility instead of display:none */
-    opacity: 0;
-    visibility: hidden;
-    
+    opacity: 0; visibility: hidden; transform: translateY(-10px);
+    transition: all 0.2s ease;
     position: absolute; right: 0; top: 100%;
     background-color: #fff; min-width: 210px;
-    border-radius: 12px; padding: 8px 0; z-index: 1050;
+    border-radius: 12px; padding: 8px 0; 
     list-style: none; margin-top: 8px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #eee;
     
-    /* 2. This creates the "stay active" delay */
-    /* When mouse LEAVES, wait 0.3s before fading out */
-    transition: all 0.2s ease 1.0s; 
-    
-    /* Move it slightly up so it slides down when opening */
-    transform: translateY(-10px);
+    z-index: 1055; /* TOP LAYER - MUST be higher than overlay */
 }
 
-.profile-dropdown-container:hover .custom-dropdown-menu {
-    /* 3. Show it instantly when hovering */
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-    
-    /* When mouse ENTERS, remove the delay so it opens instantly */
-    transition-delay: 0s;
+/* 5. OPEN STATES */
+/* Show menu and overlay when checked */
+.dropdown-checkbox:checked ~ .custom-dropdown-menu {
+    opacity: 1; visibility: visible; transform: translateY(0);
+}
+.dropdown-checkbox:checked ~ .overlay-close { 
+    display: block; 
 }
 
-/* Dropdown Item Styling */
-.menu-header {
-    padding: 8px 16px;
-    border-bottom: 1px solid #eee;
-    margin-bottom: 4px;
-}
+/* 6. Arrow Rotation */
+.transition-icon { transition: transform 0.2s; }
+.dropdown-checkbox:checked + label .transition-icon { transform: rotate(180deg); }
 
-.custom-dropdown-menu li a {
-    display: block;
-    padding: 10px 16px;
-    color: #4a5568;
-    text-decoration: none;
-    font-size: 13px;
-    transition: all 0.2s ease;
-}
-
-.custom-dropdown-menu li a:hover {
-    background-color: rgba(13, 110, 253, 0.05);
-    color: var(--app-blue);
-}
-
-.menu-divider {
-    height: 1px;
-    background-color: #eee;
-    margin: 4px 0;
-}
+/* Standard styling */
+.menu-header { padding: 10px 16px; border-bottom: 1px solid #eee; margin-bottom: 4px; }
+.custom-dropdown-menu li a { display: block; padding: 10px 16px; color: #4a5568; text-decoration: none; font-size: 13px; transition: all 0.2s ease; }
+.custom-dropdown-menu li a:hover { background-color: rgba(13, 110, 253, 0.05); color: #0d6efd; }
+.menu-divider { height: 1px; background-color: #eee; margin: 4px 0; }

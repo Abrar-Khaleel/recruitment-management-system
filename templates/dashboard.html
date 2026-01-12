@@ -10,24 +10,62 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     
     <style>
+        /* --- CRITICAL: EMBEDDED DROPDOWN LOGIC (Bypasses Cache) --- */
+        
+        /* 1. HIDE the checkbox input */
+        #dropdown-toggle { display: none; }
+
+        /* 2. The Profile Button (Label) */
+        .profile-stack {
+            display: flex; align-items: center; gap: 10px; padding: 4px 8px;
+            border-radius: 30px; background: #fff; border: 1px solid #eee;
+            cursor: pointer; user-select: none; transition: all 0.2s ease;
+            position: relative; z-index: 1055;
+        }
+        .profile-stack:hover { background-color: #f8f9fa; border-color: #0d6efd; }
+
+        /* 3. The Menu (Hidden by default) */
+        .custom-dropdown-menu {
+            opacity: 0; visibility: hidden; transform: translateY(-10px);
+            transition: all 0.2s ease;
+            position: absolute; right: 0; top: 100%;
+            background-color: #fff; min-width: 210px;
+            border-radius: 12px; padding: 8px 0; z-index: 1055;
+            list-style: none; margin-top: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #eee;
+        }
+
+        /* 4. THE TRIGGER: When checkbox is checked, SHOW the menu */
+        #dropdown-toggle:checked ~ .custom-dropdown-menu {
+            opacity: 1; visibility: visible; transform: translateY(0);
+        }
+
+        /* 5. Rotate Arrow */
+        .transition-icon { transition: transform 0.2s; }
+        #dropdown-toggle:checked + label .transition-icon { transform: rotate(180deg); }
+
+        /* 6. Overlay (Closes menu when clicking outside) */
+        .overlay-close {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1050; cursor: default;
+        }
+        #dropdown-toggle:checked ~ .overlay-close { display: block; }
+        
+        /* General Styles */
+        .menu-header { padding: 10px 16px; border-bottom: 1px solid #eee; margin-bottom: 4px; }
+        .custom-dropdown-menu li a { display: block; padding: 10px 16px; color: #4a5568; text-decoration: none; font-size: 13px; transition: all 0.2s ease; }
+        .custom-dropdown-menu li a:hover { background-color: rgba(13, 110, 253, 0.05); color: #0d6efd; }
+        .menu-divider { height: 1px; background-color: #eee; margin: 4px 0; }
+        
+        /* Your other custom styles */
         .nav-section { margin-top: 24px; font-size: 10px; letter-spacing: 1px; color: #adb5bd; text-transform: uppercase; font-weight: 700; padding: 0 24px 8px; }
         .avatar-circle-sm { width: 32px; height: 32px; background-color: #e3e3e3; color: #555; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; margin-right: 12px; flex-shrink: 0; }
         .table-hover tbody tr:hover { background-color: rgba(13, 110, 253, 0.02); cursor: pointer; transition: all 0.2s ease; }
         .action-btn { padding: 4px 8px; border-radius: 6px; color: #6c757d; transition: all 0.2s ease; }
-        .action-btn:hover { background-color: #f8f9fa; color: var(--app-blue); }
+        .action-btn:hover { background-color: #f8f9fa; color: #0d6efd; }
         .search-container { flex: 1; max-width: 400px; position: relative; }
         .search-container i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #adb5bd; }
         .search-input-refined { width: 100%; padding: 8px 12px 8px 36px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 14px; transition: all 0.2s ease; }
-        .profile-stack { display: flex; align-items: center; gap: 10px; padding: 4px 8px; border-radius: 30px; background: #fff; border: 1px solid #eee; transition: all 0.2s ease; }
-        .profile-dropdown-container { position: relative; }
-        .custom-dropdown-menu { display: none; position: absolute; right: 0; top: 100%; background-color: #fff; min-width: 210px; border-radius: 12px; padding: 8px 0; z-index: 1050; list-style: none; margin-top: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #eee; animation: fadeIn 0.2s ease-out; }
-        .profile-dropdown-container:hover .custom-dropdown-menu { display: block; }
-        .profile-dropdown-container:hover .profile-stack { background-color: #f8f9fa; border-color: var(--app-blue); }
-        .menu-header { padding: 10px 16px; border-bottom: 1px solid #eee; margin-bottom: 4px; }
-        .custom-dropdown-menu li a { display: block; padding: 10px 16px; color: #4a5568; text-decoration: none; font-size: 13px; transition: all 0.2s ease; }
-        .custom-dropdown-menu li a:hover { background-color: rgba(13, 110, 253, 0.05); color: var(--app-blue); }
-        .menu-divider { height: 1px; background-color: #eee; margin: 4px 0; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -59,27 +97,38 @@
                 <p class="text-secondary small mb-0" style="font-weight: 500;">Hiring Season 2025-2026</p>
             </div>
             <div class="d-flex align-items-center gap-4">
-                <div class="search-container d-none d-md-block">
-                    <i class="bi bi-search"></i>
-                    <input type="text" class="search-input-refined" placeholder="Search candidates...">
-                </div>
-               <div class="profile-dropdown-container">
-                    <div class="profile-stack" style="cursor: pointer;">
+               <form action="{% url 'students_list' %}" method="GET" class="search-container d-none d-md-block" style="position: relative;">
+                    <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #adb5bd;"></i>
+                    <input type="text" name="search" class="search-input-refined" placeholder="Search (Name or Role)">
+                </form>
+                
+                <div class="profile-dropdown-container" style="position: relative;">
+                    <input type="checkbox" id="dropdown-toggle">
+                    
+                    <label for="dropdown-toggle" class="profile-stack">
                         <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width:32px; height:32px; font-size: 12px; font-weight: bold;">
                             {{ user.first_name|slice:":1"|upper }}
                         </div>
                         <span class="small fw-bold d-none d-lg-inline" style="color: #444;">
                             {{ user.first_name|default:"Admin" }}
                         </span>
-                        <i class="bi bi-chevron-down small text-muted me-1"></i>
-                    </div>
+                        <i class="bi bi-chevron-down small text-muted me-1 transition-icon"></i>
+                    </label>
+
                     <ul class="custom-dropdown-menu">
-                        <li class="menu-header"><div class="fw-bold small" style="color: #333;">{{ user.first_name|default:user.username }}</div><div class="text-muted" style="font-size: 11px;">{{ user.email }}</div></li>
+                        <li class="menu-header">
+                            <div class="fw-bold small" style="color: #333;">{{ user.first_name|default:user.username }}</div>
+                            <div class="text-muted" style="font-size: 11px;">{{ user.email }}</div>
+                        </li>
+                        
                         <li><a href="{% url 'profile' %}"><i class="bi bi-person me-2"></i> My Profile</a></li>
                         <li><a href="{% url 'settings' %}"><i class="bi bi-gear me-2"></i> Account Settings</a></li>
+                        
                         <li class="menu-divider"></li>
                         <li><a href="{% url 'logout' %}" class="text-danger fw-bold"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
                     </ul>
+                    
+                    <label for="dropdown-toggle" class="overlay-close"></label>
                 </div>
             </div>
         </div>
@@ -89,7 +138,7 @@
                 <div class="row g-4 mb-4">
                     <div class="col-md-6">
                         <div class="card-glass p-4 shadow-sm border-0 h-100 d-flex flex-row align-items-center gap-4">
-                            <div class="icon-box-lg bg-primary bg-opacity-10 text-primary"><i class="bi bi-people-fill"></i></div>
+                            <div class="icon-box-lg bg-primary bg-opacity-10 text-primary" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-size: 20px;"><i class="bi bi-people-fill"></i></div>
                             <div>
                                 <h6 class="text-muted text-uppercase fw-bold small mb-1">Total Candidates</h6>
                                 <h2 class="fw-bold mb-0">{{ total_students }}</h2>
@@ -101,7 +150,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="card-glass p-4 shadow-sm border-0 h-100 d-flex flex-row align-items-center gap-4">
-                            <div class="icon-box-lg bg-info bg-opacity-10 text-info"><i class="bi bi-briefcase-fill"></i></div>
+                            <div class="icon-box-lg bg-info bg-opacity-10 text-info" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-size: 20px;"><i class="bi bi-briefcase-fill"></i></div>
                             <div>
                                 <h6 class="text-muted text-uppercase fw-bold small mb-1">Open Job Roles</h6>
                                 <h2 class="fw-bold mb-0">{{ total_courses }}</h2>
@@ -150,7 +199,7 @@
                                     <td colspan="4" class="text-center py-4 text-muted small">No recent applications found.</td>
                                 </tr>
                                 {% endfor %}
-                                </tbody>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -159,24 +208,23 @@
             <div class="col-lg-4 d-flex flex-column">
                 <div class="card-glass p-4 shadow-sm border-0 h-100">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h6 class="fw-bold mb-0">HR Notice Board</h6>
-                        <span class="badge bg-danger rounded-pill px-2">2 New</span>
+                        <h6 class="fw-bold mb-0">Notice Board</h6>
+
                     </div>
                     <div class="list-group list-group-flush">
+                        {% for notice in notices %}
                         <div class="list-group-item bg-transparent px-0 border-0 mb-3">
                             <div class="d-flex align-items-center gap-2 mb-1">
-                                <span class="badge bg-primary bg-opacity-10 text-primary" style="font-size: 9px;">NEW</span>
-                                <small class="text-muted" style="font-size: 11px;">2 hours ago</small>
+                                <span class="badge bg-{{ notice.tag_color }} bg-opacity-10 text-{{ notice.tag_color }}" style="font-size: 9px;">
+                                    {{ notice.tag }}
+                                </span>
+                                <small class="text-muted" style="font-size: 11px;">{{ notice.time }}</small>
                             </div>
-                            <h6 class="mb-0 text-dark" style="font-size: 14px; font-weight: 600;">Interview Schedule Released</h6>
+                            <h6 class="mb-0 text-dark" style="font-size: 14px; font-weight: 600;">{{ notice.title }}</h6>
                         </div>
-                        <div class="list-group-item bg-transparent px-0 border-0">
-                            <div class="d-flex align-items-center gap-2 mb-1">
-                                <span class="badge bg-danger bg-opacity-10 text-danger" style="font-size: 9px;">URGENT</span>
-                                <small class="text-muted" style="font-size: 11px;">1 day ago</small>
-                            </div>
-                            <h6 class="mb-0 text-dark" style="font-size: 14px; font-weight: 600;">Hiring Freeze (Q3)</h6>
-                        </div>
+                        {% empty %}
+                        <div class="text-center text-muted small py-4">No new notices</div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

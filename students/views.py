@@ -6,6 +6,7 @@ from django.contrib import messages
 import csv
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 # You can keep your existing imports (Student, Course) here as well
 
 def login_view(request):
@@ -174,9 +175,6 @@ def delete_student(request, student_id):
     return render(request, 'delete-student.html', {'student': student})
 
 # --- COURSE MANAGEMENT ---
-def courses_list(request):
-    courses = Course.objects.all()
-    return render(request, 'courses.html', {'courses': courses})
 
 def add_course(request):
     if request.method == 'POST':
@@ -235,7 +233,7 @@ def delete_course(request, course_id):
 
 def export_students_csv(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="students_report.csv"'
+    response['Content-Disposition'] = 'attachment; filename="candidates_report.csv"'
 
     writer = csv.writer(response)
     writer.writerow(['ID', 'Full Name', 'Email', 'Course', 'Age']) # Header
@@ -261,3 +259,86 @@ def settings_view(request):
         return redirect('settings')
     
     return render(request, 'settings.html', {'user': request.user})
+
+def dashboard(request):
+    # 1. Fetch your actual database counts
+    total_students = Student.objects.count()
+    total_courses = Course.objects.count()
+    
+    # 2. Fetch recent candidates for the table
+    recent_students = Student.objects.all().order_by('-id')[:5]
+    
+    # 3. DEFINE THE NOTICES HERE (This is the missing part)
+    notices = [
+        {
+            'title': 'Interview Schedule Released',
+            'tag': 'NEW',
+            'tag_color': 'primary', # correlates to Bootstrap class 'text-primary'
+            'time': '2 hours ago'
+        },
+        {
+            'title': 'Hiring Freeze (Q3)',
+            'tag': 'URGENT',
+            'tag_color': 'danger',  # correlates to Bootstrap class 'text-danger'
+            'time': '1 day ago'
+        },
+        {
+            'title': 'System Maintenance',
+            'tag': 'INFO',
+            'tag_color': 'info',
+            'time': '3 days ago'
+        }
+    ]
+
+    # 4. Pass 'notices' to the template context
+    context = {
+        'total_students': total_students,
+        'total_courses': total_courses,
+        'recent_students': recent_students,
+        'notices': notices,  # <--- Crucial Step
+    }
+    
+    return render(request, 'dashboard.html', context)
+
+    context = {
+        'total_students': total_students,
+        'total_courses': total_courses,
+        'recent_students': recent_students,
+        'notices': notices, # Pass notices to template
+    }
+    return render(request, 'dashboard.html', context)
+
+def students_list(request):
+    # 1. Get the search query from the URL (e.g., ?search=John)
+    query = request.GET.get('search')
+    
+    if query:
+        # 2. Filter by Name, Email, or Course Name
+        students = Student.objects.filter(
+            Q(full_name__icontains=query) | 
+            Q(email__icontains=query) |
+            Q(course__name__icontains=query)
+        )
+    else:
+        # 3. If no search, show all
+        students = Student.objects.all()
+
+    return render(request, 'students.html', {'students': students})
+
+def courses(request):
+    # 1. Grab the search text from the URL (sent by your HTML form)
+    search_query = request.GET.get('search')
+    
+    if search_query:
+        # 2. If text exists, FILTER the list
+        # We search in Job Name (e.g. "Developer") OR Job ID (e.g. "JOB-01")
+        courses = Course.objects.filter(
+            Q(name__icontains=search_query) | 
+            Q(code__icontains=search_query)
+        )
+    else:
+        # 3. If no text, show EVERYTHING
+        courses = Course.objects.all()
+
+    # 4. Send the filtered list to the HTML
+    return render(request, 'courses.html', {'courses': courses})

@@ -21,7 +21,7 @@ urlpatterns = [
     path('export/', views.export_students_csv, name='export_csv'),
     
     # Courses (THIS WAS MISSING OR MISNAMED)
-    path('courses/', views.courses_list, name='courses'),  # <--- This 'name' must match {% url 'courses' %}
+    path('courses/', views.courses, name='courses'),  # <--- This 'name' must match {% url 'courses' %}
     path('courses/add/', views.add_course, name='add_course'),
     path('courses/edit/<int:course_id>/', views.update_course, name='update_course'),
     path('courses/delete/<int:course_id>/', views.delete_course, name='delete_course'),
